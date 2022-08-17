@@ -5,6 +5,7 @@ interface MenuItemProps {
     texto: string
     icon: any
     className?: string
+    render: boolean
     onClick?: (e: any) => void
 }
 
@@ -29,7 +30,7 @@ export default function MenuItem(props: MenuItemProps) {
         )
     }
 
-    return (
+    return (!props.render ? null : (
         <li onClick={props.onClick}
             className={`
                 hover:bg-gray-100
@@ -44,5 +45,6 @@ export default function MenuItem(props: MenuItemProps) {
                 renderLink()
             )}
         </li>
+        )
     );
 }

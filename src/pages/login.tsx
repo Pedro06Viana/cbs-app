@@ -1,11 +1,9 @@
 import Router from "next/router";
-import { useEffect, useState } from "react";
-import AuthInput from "../components/auth/AuthInput";
+import { useState } from "react";
 import { IconWarning } from "../components/icons";
+import { Modo } from '../config/constants'
 import { useUser } from '../lib/hooks'
-import axios from 'axios'
-import AuthSelectInput from "../components/auth/AuthSelectInput";
-import { Modo, Roles } from '../config/constants'
+import AuthInput from "../components/auth/AuthInput";
 
 export default function Login() {
     useUser({ redirectTo: '/', redirectIfFound: true })
@@ -13,40 +11,13 @@ export default function Login() {
     const [modo, setModo] = useState<Modo>('login')
     const [erro, setErro] = useState(null)
 
-    const [nome, setNome] = useState('')
     const [nif, setNif] = useState('')
-    const [nib, setNib] = useState('')
     const [password, setPassword] = useState('')
-    const [posto, setPosto] = useState(1)
-    const [postos, setPostos] = useState([])
-    const [role, setRole] = useState(2)
-
-    /* GET POSTOS FROM DB */
-    useEffect(() => {
-        const getPostos = async () => {
-            await axios.get('/api/postos')
-                .then(function (response) {
-                    const postos = new Array()
-                    response.data.map(({ id_posto, posto }) => {
-                        postos.push({ id: id_posto, value: posto })
-                    })
-                    setPostos(postos)
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                })
-        }
-        getPostos()
-    }, [])
 
     function handlerSubmit() {
-        if (modo === 'login') {
-            handlerLogin()
-        } else {
-            handlerRegister()
-        }
+        handlerLogin()
     }
+
     async function handlerLogin() {
         try {
             // Adicionar Schema
@@ -73,50 +44,6 @@ export default function Login() {
 
         } catch (error) {
             criarErro(error?.message ?? 'Ocorreu um erro inesperado!')
-        }
-    }
-
-    async function handlerRegister() {
-        // Adicionar Schema
-        const body = {
-            nome: nome,
-            posto: +posto,
-            nib: +nib,
-            nif: +nif,
-            roles: +role,
-            password: password,
-        }
-
-        try {
-            const res = await fetch('/api/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            })
-            if (res.status === 200) {
-                setModo('login')
-                criarErro(null)
-                setNif('')
-                setPassword('')
-                setNome('')
-                setPosto(1)
-                setNib('')
-                setRole(2)
-            } else {
-                const { message } = await res.json()
-                criarErro(message)
-                if (res.status === 409) {
-                    setModo('login')
-                    criarErro(null)
-                    setNome('')
-                    setPosto(1)
-                    setNib('')
-                    setRole(2)
-                }
-            }
-        } catch (error) {
-            console.error('An unexpected error happened occurred:', error)
-            criarErro(error.message)
         }
     }
 
@@ -187,43 +114,6 @@ export default function Login() {
                     obrigatorio
                     render
                 />
-                <AuthInput
-                    id="nome"
-                    label="Nome"
-                    tipo="text"
-                    valorAlterado={setNome}
-                    valor={nome}
-                    obrigatorio={modo === 'registo'}
-                    render={modo === 'registo'}
-                />
-                <AuthSelectInput
-                    id="posto"
-                    label="Posto"
-                    valor={postos}
-                    valueSelected={posto}
-                    valorAlterado={setPosto}
-                    obrigatorio={modo === 'registo'}
-                    render={modo === 'registo'}
-                />
-                <AuthInput
-                    id="nib"
-                    label="NIB"
-                    tipo="text"
-                    valorAlterado={setNib}
-                    valor={nib}
-                    obrigatorio={modo === 'registo'}
-                    render={modo === 'registo'}
-                />
-                <AuthSelectInput
-                    id="roles"
-                    label="Tipo de Acesso"
-                    valor={Roles}
-                    valueSelected={role}
-                    valorAlterado={setRole}
-                    obrigatorio={modo === 'registo'}
-                    render={modo === 'registo'}
-                />
-
 
                 <button
                     onClick={handlerSubmit}
@@ -234,12 +124,9 @@ export default function Login() {
                     px-4 py-3 mt-6
                 `}
                 >
-                    {modo === 'login' ? 'Login' : 'Registo'}
+                    Login
                 </button>
-
                 <hr className="my-6 border-gray-300 w-full" />
-
-                {renderMsgRodape()}
             </div>
         </div>
     );

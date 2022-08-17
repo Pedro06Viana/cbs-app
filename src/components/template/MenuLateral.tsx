@@ -1,5 +1,6 @@
 import Router from "next/router";
-import { IconBell, IconConfig, IconHome, IconLogout } from "../icons";
+import { useUser } from "../../lib/hooks";
+import { IconUsers, IconConfig, IconHome, IconLogout } from "../icons";
 import Logo from "./Logo";
 import MenuItem from "./MenuItem";
 
@@ -8,6 +9,9 @@ export default function MenuLateral() {
     const logout = () => {
         Router.push('/api/logout')
     }
+
+    const { user } = useUser()
+    const userRole = user.roles
 
     return (
         <aside className={`
@@ -23,9 +27,9 @@ export default function MenuLateral() {
                 <Logo />
             </div>
             <ul className="flex-1">
-                <MenuItem url="/" texto="Início" icon={IconHome} />
-                <MenuItem url="/definicoes" texto="Definições" icon={IconConfig} />
-                <MenuItem url="/notificacoes" texto="Notificações" icon={IconBell} />
+                <MenuItem url="/" texto="Início" icon={IconHome} render />
+                <MenuItem url="/definicoes" texto="Definições" icon={IconConfig} render />
+                <MenuItem url="/user" texto="Utilizadores" icon={IconUsers} render={userRole === 1} />
             </ul>
             <ul>
                 <MenuItem onClick={logout}
@@ -35,7 +39,8 @@ export default function MenuLateral() {
                     text-red-600 
                     hover:bg-red-400 hover:text-white
                     dark:text-red-400 dark:hover:text-white
-                `} />
+                `}
+                    render />
             </ul>
         </aside>
     );

@@ -56,6 +56,5 @@ export function validatePassword(user, inputPassword) {
     .pbkdf2Sync(inputPassword, user.salt, 1000, 64, "sha512")
     .toString("hex");
   const passwordsMatch = user.hash === inputHash;
-  console.log(`LOG 6 passwordsMatch -> ${passwordsMatch}`);
   return passwordsMatch;
 }

@@ -11,7 +11,17 @@ const fetcher = (url) =>
 
 export function useUser({ redirectTo, redirectIfFound } = {}) {
   const { data, error } = useSWR("/api/user", fetcher);
-  const user = data?.user;
+
+  const user = data?.user
+    ? {
+        uid: data.user[0].uid,
+        nome: data.user[0].nome,
+        posto: data.user[0].posto,
+        nib: data.user[0].nib,
+        avatar: data.user[0].avatar,
+        roles: data.user[0].roles,
+      }
+    : undefined;
   const finished = Boolean(data);
   const hasUser = Boolean(user);
 
@@ -27,9 +37,5 @@ export function useUser({ redirectTo, redirectIfFound } = {}) {
     }
   }, [redirectTo, redirectIfFound, finished, hasUser]);
 
-  /*  useEffect(() => {
-    console.log(`FINISHED: ${finished}`);
-    console.log(`USER: ${user}`);
-  }); */
   return error ? null : { user, finished };
 }

@@ -6,10 +6,14 @@ export const localStrategy = new Local.Strategy(
   function (nif, password, done) {
     findUser({ nif })
       .then((user) => {
-        if (user && validatePassword(user[0], password)) {
-          done(null, user[0]);
+        if (user.length === 1) {
+          if (user && validatePassword(user[0], password)) {
+            done(null, user[0]);
+          } else {
+            done(new Error("Nif e Password não combinam"));
+          }
         } else {
-          done(new Error("Invalid nif and password combination"));
+          done(new Error("Sem autorização"));
         }
       })
       .catch((error) => {

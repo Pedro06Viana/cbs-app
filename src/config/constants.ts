@@ -1,5 +1,3 @@
-export type Modo = "login" | "registo";
-
 export const Roles = [
   {
     id: 1,

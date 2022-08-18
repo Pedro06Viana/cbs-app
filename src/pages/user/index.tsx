@@ -1,4 +1,4 @@
-import Registo from "../../components/form/registo";
+import Registo from "../../components/form/RegisterForm";
 import Layout from "../../components/template/Layout";
 
 export default function Notificacoes() {

@@ -1,15 +1,13 @@
 import { useState } from "react";
-import { IconWarning } from "../icons";
 import { Roles } from '../../config/constants'
 import useAppData from "../../data/hook/useAppData";
 import AuthSelectInput from "../auth/AuthSelectInput";
 import AuthInput from "../auth/AuthInput";
 import { handlerRegister } from './handlerFunction'
+import { toast } from "react-toastify";
 
-export default function Registo() {
+export default function RegisterForm() {
     const { postos } = useAppData()
-
-    const [erro, setErro] = useState(null)
 
     const [nome, setNome] = useState('')
     const [nif, setNif] = useState('')
@@ -29,7 +27,7 @@ export default function Registo() {
         };
         const res = await handlerRegister(body)
         if (res.status === 200) {
-            criarErro(null);
+            toast.success(res.message);
             setNif("");
             setPassword("");
             setNome("");
@@ -38,37 +36,15 @@ export default function Registo() {
             setRole(2);
         } else {
             const { message } = await res.json();
-            criarErro(message);
+            toast.error(message);
             if (res === 409) {
-                criarErro(null);
+                toast.info(res.message);
                 setNome("");
                 setPosto(1);
                 setNib("");
                 setRole(2);
             }
         }
-    }
-    /* 
-    * CriarSucesso
-    *
-    */
-    function criarErro(msg, tempo = 5) {
-        setErro(msg)
-        setTimeout(() => setErro(null), tempo * 1000)
-    }
-
-    function renderErro() {
-        return erro ?
-            <div className={`
-                flex items-center
-                bg-red-400 text-white
-                py-3 px-5 my-2
-                border border-red-700 rounded-lg
-            `} >
-                {IconWarning()}
-                < span className="ml-3" > {erro}</span >
-            </div >
-            : false
     }
 
     return (
@@ -77,9 +53,6 @@ export default function Registo() {
                 <h1 className={`text-3xl font-bold mb-5`}>
                     Efetuar novo Registo
                 </h1>
-
-                {renderErro()}
-
                 <AuthInput
                     id="nif"
                     label="Nif"

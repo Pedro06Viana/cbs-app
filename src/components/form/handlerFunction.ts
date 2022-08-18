@@ -1,11 +1,15 @@
-/* async function handlerLogin(nif, password) {
-  try {
-    // Adicionar Schema
-    const body = {
-      nif: +nif,
-      password: password,
-    };
+interface LoginProps {
+  nif: number
+  password: string
+}
+function handlerLogin(props: LoginProps): any {
+  // Adicionar Schema
+  const body = {
+    nif: +props.nif,
+    password: props.password,
+  };
 
+  async function resquest() {
     try {
       const res = await fetch("/api/login", {
         method: "POST",
@@ -13,19 +17,22 @@
         body: JSON.stringify(body),
       });
       if (res.status === 200) {
-        Router.push("/");
+        return { status: 200, message: "Login com Sucesso" }
+      } else if (res.status === 401) {
+        const { message } = await res.json();
+        return { status: 401, message }
       } else {
-        criarErro(await res.text());
+        const { message } = await res.json();
+        return { status: 500, message }
       }
     } catch (error) {
       console.error("An unexpected error happened occurred:", error);
-      criarErro(error.message);
+      return { status: 500, message: error.message }
     }
-  } catch (error) {
-    criarErro(error?.message ?? "Ocorreu um erro inesperado!");
   }
+  return resquest()
 }
- */
+
 interface RegisterProps {
   nome: string
   posto: number
@@ -58,6 +65,8 @@ function handlerRegister(props: RegisterProps): any {
         const { message } = await res.json();
         if (res.status === 409) {
           return { status: 409, message }
+        } else {
+          return { status: 500, message }
         }
       }
     } catch (error) {
@@ -68,4 +77,4 @@ function handlerRegister(props: RegisterProps): any {
   return request()
 }
 
-export { handlerRegister };
+export { handlerLogin, handlerRegister };
